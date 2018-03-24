@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
 namespace InformationProtection_Tasks
@@ -12,9 +10,15 @@ namespace InformationProtection_Tasks
     class Cipher
     {
         private Dictionary<char, int> Alphabet { get; set; }
-        private int Shift { get; set; }
-        private Direction Dir { get; set; }
-        private string Message { get; set; }
+        public int Shift { get; set; }
+        public Direction Dir { get; set; }
+        public string Message { get; set; }
+
+        public Cipher()
+        {
+            GenerateAlphabet();
+        }
+
         public Cipher(int _shift, Direction _direction, string _message)
         {
             GenerateAlphabet();
@@ -39,18 +43,18 @@ namespace InformationProtection_Tasks
             }
         }
 
-        public char CaesarCharEncode(char symbol, int shift)
+        public char ShiftChar(char symbol, int shift, Direction dir)
         {
-            char d = char.IsUpper(symbol) ? 'A' : 'a';
-            return (char)((((symbol + shift) - d) % 26) + d);
+            char start = char.IsUpper(symbol) ? 'A' : 'a';
+            return (dir == Direction.Right) ? (char)((((symbol + shift) - start) % 26) + start) : (char)((26+((symbol - shift) - start))%26 + start);
         }
 
-        public string CaesarEncode()
+        public string CaesarEncode(string message)
         {
             string encoded = String.Empty;
-            foreach(char symbol in Message)
+            foreach(char symbol in message)
             {
-                encoded += (symbol == ' ') ? ' ' : CaesarCharEncode(symbol, Shift);
+                encoded += (symbol == ' ') ? ' ' : ShiftChar(symbol, Shift, Dir);
             }
             return encoded;
         }
@@ -60,17 +64,17 @@ namespace InformationProtection_Tasks
             string decoded = String.Empty;
             foreach(char symbol in encoded)
             {
-                decoded += (symbol == ' ') ? ' ' : CaesarCharEncode(symbol, 26 - Shift);
+                decoded += (symbol == ' ') ? ' ' : ShiftChar(symbol, Shift, (Dir==Direction.Right) ? Direction.Left : Direction.Right);
             }
             return decoded;
         }
 
-        public string SimpleReplaceEncode()
+        public string SimpleReplaceEncode(string message)
         {
             string encoded = String.Empty;
-            for(int i=0; i<Message.Length; ++i)
+            for(int i=0; i<message.Length; ++i)
             {
-                encoded += (Message[i] == ' ')?" ":(Alphabet[Message[i]].ToString() + " ");
+                encoded += (message[i] == ' ')?" ":(Alphabet[message[i]].ToString() + " ");
             }
             encoded = encoded.Substring(0, encoded.Length - 1);
             return encoded;
@@ -92,31 +96,64 @@ namespace InformationProtection_Tasks
             return decoded;
         }
 
-        public void ReadFromFile(string fileName)
-        {
-            Message = "somethdin";
-        }
-
-        public static char cipher(char ch, int key)
-        {
-            if (!char.IsLetter(ch))
-            {
-
-                return ch;
-            }
-
-            char d = char.IsUpper(ch) ? 'A' : 'a';
-            return (char)((((ch + key) - d) % 26) + d);
-        }
-
         public string Encode()
         {
-            return "";
+            return SimpleReplaceEncode(CaesarEncode(Message));
         }
 
         public string Decode()
         {
-            return "";
+            return CaesarDecode(SimpleReplaceDecode(Message));
+        }
+
+        public void ReadMessageFromFile(string fileName)
+        {
+            using (StreamReader reader = new StreamReader("../../" + fileName))
+            {
+                Message = reader.ReadLine();
+            }
+        }
+
+        public void WriteDecodedToFile(string fileName)
+        {
+            using (StreamWriter writer = new StreamWriter("../../" + fileName))
+            {
+                writer.WriteLine(Decode());
+            }
+        }
+
+        public void WriteEncodedToFile(string fileName)
+        {
+            using (StreamWriter writer = new StreamWriter("../../" + fileName))
+            {
+                writer.WriteLine("{0} {1}", Shift, (Dir == Direction.Left) ? "Left" : "Right");
+                string alphabetLine = String.Empty;
+                foreach(var elem in Alphabet)
+                {
+                    alphabetLine += String.Format("{0} {1}  ", elem.Key, elem.Value);
+                }
+                alphabetLine = alphabetLine.Substring(0, alphabetLine.Length - 2);
+                writer.WriteLine(alphabetLine);
+                writer.Write(Encode());
+            }
+        }
+
+        public void ReadEncodedFromFile(string fileName)
+        {
+            using (StreamReader reader = new StreamReader("../../" + fileName))
+            {
+                string[] shiftAndDirLine = reader.ReadLine().Split(' ');
+                Shift = Convert.ToInt32(shiftAndDirLine[0]);
+                Dir = (shiftAndDirLine[1] == "Left") ? Direction.Left : Direction.Right;
+                string[] alphas = reader.ReadLine().Split(new[] { "  " }, StringSplitOptions.None);
+                Alphabet = new Dictionary<char, int>();
+                foreach(string pair in alphas)
+                {
+                    string[] keyAndValue = pair.Split(' ');
+                    Alphabet.Add(Convert.ToChar(keyAndValue[0]), Convert.ToInt32(keyAndValue[1]));
+                }
+                Message = reader.ReadLine();
+            }
         }
     }
 
@@ -124,9 +161,24 @@ namespace InformationProtection_Tasks
     {
         static void Main(string[] args)
         {
-            Cipher cipher = new Cipher(5, Direction.Left, "Modest Buchick");
-            Console.WriteLine(cipher.CaesarEncode());
-            Console.WriteLine(cipher.CaesarDecode(cipher.CaesarEncode()));
+            Console.WriteLine("Encoding######");
+            Cipher cipher = new Cipher();
+            cipher.ReadMessageFromFile("InputMessage.txt");
+            Console.WriteLine("Input shift: ");
+            cipher.Shift = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Input direction(left or right):");
+            cipher.Dir = (Console.ReadLine() == "left") ? Direction.Left : Direction.Right;
+            cipher.WriteEncodedToFile("Encoded.txt");
+            Console.WriteLine("Input message: " + cipher.Message);
+            Console.WriteLine("Caesar: " + cipher.CaesarEncode(cipher.Message));
+            Console.WriteLine("Caesar + Simple Replace: " + cipher.Encode());
+            Console.WriteLine("Message, table, shift, direction saved to file Encoded.txt");
+            Console.ReadKey();
+            Console.WriteLine("\nDecoding######");
+            cipher.ReadEncodedFromFile("Encoded.txt");
+            Console.WriteLine("Decoded message: " + cipher.Decode());
+            cipher.WriteDecodedToFile("Decoded.txt");
+            Console.WriteLine("Decoded message saved to file Decoded.txt");
             Console.ReadKey();
         }
     }
