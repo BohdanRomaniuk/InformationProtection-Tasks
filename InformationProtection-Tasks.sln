@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1) Caesar cipher", "InformationProtection-Tasks\1) Caesar cipher.csproj", "{AAB2AFA5-1617-4CBC-905C-890DECFA381E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2) Gamma cipher", "2) Gamma cipher\2) Gamma cipher.csproj", "{755B0B6D-390B-44DC-982D-BBCA765BBC97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{AAB2AFA5-1617-4CBC-905C-890DECFA381E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAB2AFA5-1617-4CBC-905C-890DECFA381E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAB2AFA5-1617-4CBC-905C-890DECFA381E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{755B0B6D-390B-44DC-982D-BBCA765BBC97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{755B0B6D-390B-44DC-982D-BBCA765BBC97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{755B0B6D-390B-44DC-982D-BBCA765BBC97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{755B0B6D-390B-44DC-982D-BBCA765BBC97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
