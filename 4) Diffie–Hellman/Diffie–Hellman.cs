@@ -64,14 +64,16 @@ namespace Information
             return true;
         }
 
-        public static long Power(long x, long y, long p)
+        public static long PowerMod(long x, long y, long p)
         {
             long res = 1;
             x = x % p;
             while (y > 0)
             {
                 if (y % 2 != 0)
+                {
                     res = (res * x) % p;
+                }
                 y = y >> 1;
                 x = (x * x) % p;
             }
@@ -80,50 +82,42 @@ namespace Information
 
         public static long FindPrimitiveRoot(long p)
         {
-            HashSet<long> s = new HashSet<long>(); ;
-            long phi = p - 1;
-
-            //findPrimefactorsBegin
-            while (phi % 2 == 0)
+            List<long> fact = new List<long>();
+            long phi = p - 1, n = phi;
+            for (long i = 2; i * i <= n; ++i)
             {
-                s.Add(2);
-                phi = phi / 2;
-            }
-            for (long i = 3; i <= Math.Sqrt(phi); i = i + 2)
-            {
-                while (phi % i == 0)
+                if (n % i == 0)
                 {
-                    s.Add(i);
-                    phi = phi / i;
-                }
-            }
-            if (phi > 2)
-            {
-                s.Add(phi);
-            } 
-            //findPrimefactorsBeginEnd
-
-            for (long r = 2; r <= phi; r++)
-            {
-                bool flag = false;
-                foreach(var elem in s)
-                {
-                    if (Power(r, phi / (elem), p) == 1)
+                    fact.Add(i);
+                    while (n % i == 0)
                     {
-                        flag = true;
-                        break;
+                        n /= i;
                     }
                 }
-                if (flag == false)
+            }
+            if (n > 1)
+            {
+                fact.Add(n);
+            }
+
+            for (long res = 2; res <= p; ++res)
+            {
+                bool ok = true;
+                for (int i = 0; i < fact.Count && ok; ++i)
                 {
-                    return r;
-                } 
+                    ok &= PowerMod(res, phi / fact[i], p) != 1;
+                }
+                if (ok)
+                {
+                    return res;
+                }
             }
             return -1;
         }
 
         static void Main(string[] args)
         {
+            while(true)
             try
             {
                 Console.Write("Input p=");
@@ -135,9 +129,9 @@ namespace Information
                 long a = FindPrimitiveRoot(p);
                 Console.WriteLine("Primitive root a: " + a);
                 Random rand = new Random();
-                A first = new A(p, a, rand.Next(10));
-                B second = new B(p, a, rand.Next(10));
-                //Console.WriteLine("\nx: {0}  y:{1}", first.x, second.y);
+                A first = new A(p, a, rand.Next(8));
+                B second = new B(p, a, rand.Next(8));
+                Console.WriteLine("\nx: {0}  y:{1}", first.x, second.y);
                 long xfroma = first.CalculateX();
                 long yfromb = second.CalculateY();
                 Console.WriteLine("\nX from A: " + xfroma);
@@ -154,7 +148,7 @@ namespace Information
             }
             finally
             {
-                Console.ReadKey();
+                //Console.ReadKey();
             }
         }
     }
