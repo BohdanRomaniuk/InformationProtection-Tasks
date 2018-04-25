@@ -19,27 +19,19 @@ namespace _3__BBS
             return Encoding.Default.GetString(bytes);
         }
 
-        public static byte ConvertToByte(BitArray bits)
+        public static byte[] BBS(int messageLength, int p, int q, int x)
         {
-            if (bits.Count != 8)
-            {
-                throw new ArgumentException("bits");
-            }
-            byte[] bytes = new byte[1];
-            bits.CopyTo(bytes, 0);
-            return bytes[0];
-        }
-
-        public static byte[] BBS(int messageLength, int n, int x)
-        {
+            int n = p * q;
             BitArray bits = new BitArray(messageLength * 8);
             byte[] result = new byte[messageLength];
             int x0 = (x*x) % n;
             bits[0] = ((x0 * x0) % 2 == 1);
+            //Console.Write("X: " + x0 + " ");
             for(int i=1; i<bits.Length; ++i)
             {
-                bits[i] = ((x0 * x0) % 2 == 1);
                 x0 = (x0 * x0) % n;
+                //Console.Write(x0 + " ");
+                bits[i] = ((x0 * x0) % 2 == 1);
             }
             bits.CopyTo(result, 0);
             return result;
@@ -59,6 +51,7 @@ namespace _3__BBS
         {
             try
             {
+                Console.WriteLine("Encoding::::::::::");
                 Console.Write("Input p=");
                 int p = Convert.ToInt32(Console.ReadLine());
                 Console.Write("Input q=");
@@ -67,7 +60,7 @@ namespace _3__BBS
                 {
                     throw new ArgumentException("P and Q must be =3mod4!!!");
                 }
-                int n = p * q;
+                
                 Console.Write("Input x=");
                 int x = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Input message:");
@@ -79,7 +72,7 @@ namespace _3__BBS
                     Console.Write(Convert.ToString(bytes[i], 2).PadLeft(8, '0')+" ");
                 }
                 Console.Write("\nBBS:  ");
-                byte[] bbs = BBS(message.Length, n, x);
+                byte[] bbs = BBS(message.Length, p, q, x);
                 for(int i=0; i<bbs.Length; ++i)
                 {
                     Console.Write(Convert.ToString(bbs[i], 2).PadLeft(8, '0') + " ");
@@ -93,6 +86,21 @@ namespace _3__BBS
                 string encodedMessage = ConvertBytesToString(encoded);
                 Console.WriteLine("\nEncoded: " + encodedMessage);
 
+                Console.WriteLine("Decoding::::::::::");
+
+                
+                Console.Write("Input p=");
+                p = Convert.ToInt32(Console.ReadLine());
+                Console.Write("Input q=");
+                q = Convert.ToInt32(Console.ReadLine());
+                if (p % 4 != 3 || q % 4 != 3)
+                {
+                    throw new ArgumentException("P and Q must be =3mod4!!!");
+                }
+
+                Console.Write("Input x=");
+                x = Convert.ToInt32(Console.ReadLine());
+                bbs = BBS(message.Length, p, q, x);
                 byte[] decoded = Xor(encoded, bbs);
                 string decodedMessage = ConvertBytesToString(decoded);
                 Console.WriteLine("Decode: " + decodedMessage);
