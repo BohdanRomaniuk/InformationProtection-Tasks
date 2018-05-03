@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3) BBS", "3) BBS\3) BBS.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4) Diffie–Hellman", "4) Diffie–Hellman\4) Diffie–Hellman.csproj", "{BD0B8819-C8E2-4CE0-9D6A-154188E9E8EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5) RSA", "5) RSA\5) RSA.csproj", "{290A12AD-DABF-433C-BEF5-6570E9E679EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BD0B8819-C8E2-4CE0-9D6A-154188E9E8EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD0B8819-C8E2-4CE0-9D6A-154188E9E8EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD0B8819-C8E2-4CE0-9D6A-154188E9E8EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{290A12AD-DABF-433C-BEF5-6570E9E679EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{290A12AD-DABF-433C-BEF5-6570E9E679EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{290A12AD-DABF-433C-BEF5-6570E9E679EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{290A12AD-DABF-433C-BEF5-6570E9E679EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
